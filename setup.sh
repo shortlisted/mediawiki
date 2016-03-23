@@ -25,7 +25,7 @@ mv $SCRIPTNAME $DESTINATION/$SCRIPTNAME
 echo "Cloning crontab..."
 crontab -l > tmpcron
 
-if [[ $(grep -F "$SCRIPTNAME" testcron) ]] ; then
+if [[ $(grep -F "$SCRIPTNAME" tmpcron) ]] ; then
     echo "Cron entry for .xml-dumps exists";
     echo "Not adding entry"
     exit 1;
