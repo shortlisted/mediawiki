@@ -6,7 +6,7 @@
 ## Setting variables
 SCRIPTDIR=$HOME/.bin
 SCRIPTNAME="wiki_xml_backup.sh"
-CRONSTRING='15 3 * * * '"$DESTINATION/$SCRIPTNAME" # Note: ' ' around text string, " " around variables
+CRONSTRING='15 3 * * * '"$SCRIPTDIR/$SCRIPTNAME" # Note: ' ' around text string, " " around variables
 WIKIDIR=/var/www/html/MediaWiki
 OUTDIR=$HOME/backups/mediawiki
 
