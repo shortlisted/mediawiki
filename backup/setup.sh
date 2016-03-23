@@ -4,9 +4,11 @@
 ## Automation via cron
 
 ## Setting variables
-DESTINATION=$HOME/.bin
+SCRIPTDIR=$HOME/.bin
 SCRIPTNAME="wiki_xml_backup.sh"
 CRONSTRING='15 3 * * * '"$DESTINATION/$SCRIPTNAME" # Note: ' ' around text string, " " around variables
+WIKIDIR=/var/www/html/MediaWiki
+OUTDIR=$HOME/backups/mediawiki
 
 # Check to see that we have the right install directory for MediaWiki
 if [ ! -f $WIKIDIR/maintenance/dumpBackup.php ]; then
@@ -22,9 +24,11 @@ if [ ! -d "$OUTDIR" ]; then
 	mkdir -p $OUTDIR;
 else
 	printf "\nBackup directory at: $OUTDIR"
-if [ ! -f $DESTINATION ]; then
+fi
+
+if [ ! -f $SCRIPTDIR ]; then
     printf "\nNo $HOME/.bin directory, creating...";
-    mkdir -p $DESTINATION
+    mkdir -p $SCRIPTDIR
 else
     printf "Placing scripts in ~/.bin/\n"
 fi
@@ -33,7 +37,7 @@ echo "Changing script to executable"
 chmod +x $SCRIPTNAME
 
 echo "Moving script..."
-mv $SCRIPTNAME $DESTINATION/$SCRIPTNAME
+mv $SCRIPTNAME $SCRIPTDIR/$SCRIPTNAME
 
 #Clone current crontab to keep old jobs
 echo "Cloning crontab..."
