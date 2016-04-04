@@ -52,6 +52,15 @@ else
     echo "$CRONSTRING" >> tmpcron;
     echo "Cron entry added:";
     tail -2 tmpcron;
-    crontab tmpcron;
-    rm tmpcron;
 fi
+
+## Add cronjob to rsync backup folder
+## Done to make sure backup files are also stored non-local
+## I need use ftp and wget to store these, with other hardware
+## directly rsyncing the backup would be possible; eg:
+## rsync -av ~/backup/ user@remote:/backupfolder/
+echo "rsync -av ~/backups ~/FTP/" >> tmpcron;
+echo "Cron rsync added:";
+tail -4 tmpcron;
+crontab tmpcron;
+rm tmpcron
