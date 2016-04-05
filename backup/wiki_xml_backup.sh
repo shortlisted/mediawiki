@@ -28,10 +28,12 @@ printf "\nPerforming daily current .xml-dump."
 $PHP $WIKIDIR/maintenance/dumpBackup.php --current > $OUTDIR/dailycurrent.xml
 
 ## Weekly full backups to be run on Mondays (-eq 1)
+## Also makes a weekly tar archive of the install directory (pictures, settings, etc)
 if [ "${DAYOFWEEK}" -eq 1 ]; then
 	printf "\nDoing full weekly backup...";
 	$PHP $WIKIDIR/maintenance/dumpBackup.php --full > $OUTDIR/fullweekly.xml
 	printf "\nBackup created: $OUTDIR/fullweekly.xml"
+    /bin/tar czfh $OUTDIR/mediawiki.tar.gz $WIKIDIR
 fi
 
 ## Fullbackups to be run on the 25th of each month, or if no monthly_dump exist
