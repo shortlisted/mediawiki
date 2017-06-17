@@ -14,6 +14,8 @@
 ## OUTDIR for destination directory
 ## WIKIDIR for MediaWiki installation directory
 ## PHP to use current PHP
+## .sqlpwd contains database username/password for a backup user
+## backup user has grants to SELECT * from wiki database
 
 ## Directories assumes a MediaWiki installation on a Raspberry pi with default paths
 
@@ -32,8 +34,10 @@ $PHP $WIKIDIR/maintenance/dumpBackup.php --current > $OUTDIR/dailycurrent.xml
 if [ "${DAYOFWEEK}" -eq 1 ]; then
 	printf "\nDoing full weekly backup...";
 	$PHP $WIKIDIR/maintenance/dumpBackup.php --full > $OUTDIR/fullweekly.xml
-	printf "\nBackup created: $OUTDIR/fullweekly.xml"
+	printf "\nBackup created: $OUTDIR/fullweekly.xml\n"
     /bin/tar czfh $OUTDIR/mediawiki.tar.gz $WIKIDIR
+  printf "\nPerforming .sql-dump.\n"
+  mysqldump --defaults-extra-file=~/.sqlpwd rbpiwiki > $OUTDIR/"$(date '+%Y-%m').wiki.sql"
 fi
 
 ## Fullbackups to be run on the 25th of each month, or if no monthly_dump exist
