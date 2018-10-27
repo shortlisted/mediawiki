@@ -18,7 +18,7 @@ else
 fi
 
 printf "Placing script in /usr/local/bin/\n"
-sudo cp $scriptname $scriptdir/$scriptname
+sudo cp $scriptname.sh $scriptdir/$scriptname
 
 #Clone current crontab to keep old jobs
 echo "Cloning crontab..."
