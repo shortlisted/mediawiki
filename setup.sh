@@ -1,66 +1,37 @@
 #!/bin/bash
 
-## Setup script for automated mediawiki .xml-dumps
+## Setup script setting up mediawiki backup
 ## Automation via cron
 
 ## Setting variables
-SCRIPTDIR=$HOME/.bin
-SCRIPTNAME="wiki_xml_backup.sh"
-CRONSTRING='15 3 * * * '"$SCRIPTDIR/$SCRIPTNAME" # Note: ' ' around text string, " " around variables
-WIKIDIR=/var/www/html/MediaWiki
-OUTDIR=$HOME/backups/mediawiki
-
-# Check to see that we have the right install directory for MediaWiki
-if [ ! -f $WIKIDIR/maintenance/dumpBackup.php ]; then
-	printf "\ndumpBackup.php missing, stopping script.";
-	exit 1
-else
-	printf "\ndumpBackup.php exists, proceeding with script\n";
-	fi
+scriptdir=/usr/local/bin
+scriptname="wikibackup"
+cronstring='15 3 * * * '"$scriptdir/$scriptname" # Note: ' ' around text string, " " around variables
+outdir=$HOME/backups/mediawiki
 
 ## Check to see that we have a directory to store backups
-if [ ! -d "$OUTDIR" ]; then
-	printf "\nNo existing backup directory. Creating directory.";
-	mkdir -p $OUTDIR;
+if [ ! -d "$outdir" ]; then
+  printf "\nNo existing backup directory. Creating directory.\n";
+  mkdir -p $outdir;
 else
-	printf "\nBackup directory at: $OUTDIR"
+  printf "\nBackup directory at: $outdir\n"
 fi
 
-if [ ! -f $SCRIPTDIR ]; then
-    printf "\nNo $HOME/.bin directory, creating...";
-    mkdir -p $SCRIPTDIR
-else
-    printf "Placing scripts in ~/.bin/\n"
-fi
-
-echo "Changing script to executable"
-chmod +x $SCRIPTNAME
-
-echo "Moving script..."
-mv $SCRIPTNAME $SCRIPTDIR/$SCRIPTNAME
+printf "Placing script in /usr/local/bin/\n"
+sudo cp $scriptname $scriptdir/$scriptname
 
 #Clone current crontab to keep old jobs
 echo "Cloning crontab..."
 crontab -l > tmpcron
 
-if [[ $(grep -F "$SCRIPTNAME" tmpcron) ]] ; then
-    echo "Cron entry for .xml-dumps exists";
+if [[ $(grep -F "$scriptname" tmpcron) ]] ; then
+    echo "Cron entry exists";
     echo "Not adding entry"
     exit 1;
 else
-    echo "$SCRIPTNAME"
-    echo "$CRONSTRING" >> tmpcron;
+    echo "$cronstring" >> tmpcron;
     echo "Cron entry added:";
     tail -2 tmpcron;
+    crontab tmpcron
+    rm tmpcron
 fi
-
-## Add cronjob to rsync backup folder
-## Done to make sure backup files are also stored non-local
-## I need use ftp and wget to store these, with other hardware
-## directly rsyncing the backup would be possible; eg:
-## rsync -av ~/backup/ user@remote:/backupfolder/
-echo "rsync -av ~/backups ~/FTP/" >> tmpcron;
-echo "Cron rsync added:";
-tail -4 tmpcron;
-crontab tmpcron;
-rm tmpcron
